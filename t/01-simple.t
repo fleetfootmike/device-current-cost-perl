@@ -6,7 +6,7 @@ use strict;
 use constant {
   DEBUG => $ENV{DEVICE_CURRENT_COST_TEST_DEBUG}
 };
-use Test::More tests => 95;
+use Test::More tests => 96;
 use POSIX qw/:termios_h/;
 
 $|=1;
@@ -15,6 +15,7 @@ use_ok('Device::CurrentCost::Message');
 BEGIN { use_ok('Device::CurrentCost::Constants'); }
 
 my $dev = Device::CurrentCost->new(device => 't/log/envy.reading.xml');
+
 is($dev->type, CURRENT_COST_ENVY, 'envy device');
 is(current_cost_type_string($dev->type), 'Envy', '... type name');
 is($dev->baud, 57600, '... baud rate');
@@ -22,6 +23,7 @@ is($dev->baud, 57600, '... baud rate (cache)');
 is($dev->posix_baud, 0010001, '... posix baud rate');
 my $msg = $dev->read;
 ok($msg, '... reading');
+isa_ok($msg, 'Device::CurrentCost::Message::Envy', 'can parse message');
 ok(!$msg->has_history, '... no history');
 ok(!$dev->sensor_history(0,'hours'), '... no specific history');
 ok($msg->has_readings, '... has readings');
